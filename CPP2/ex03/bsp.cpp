@@ -6,7 +6,7 @@
 /*   By: ama10362 <ama10362@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 22:17:20 by ama10362          #+#    #+#             */
-/*   Updated: 2024/03/06 22:48:58 by ama10362         ###   ########.fr       */
+/*   Updated: 2024/03/06 22:55:30 by ama10362         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,5 @@ bool bsp( Point const a, Point const b, Point const c, Point const point )
     Fixed pcaArea = calculateTriangleArea(point, c, a);
     std::cout << abcArea << std::endl << pabArea<< std::endl <<pbcArea<< std::endl <<pcaArea<< std::endl;
 
-    return (abcArea == pabArea + pbcArea + pcaArea);
+    return ((abcArea == pabArea + pbcArea + pcaArea) && pabArea != 0 && pbcArea != 0  && pcaArea != 0);
 }
