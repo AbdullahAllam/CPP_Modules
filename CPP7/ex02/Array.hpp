@@ -6,7 +6,7 @@
 /*   By: ama10362 <ama10362@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/23 13:02:15 by ama10362          #+#    #+#             */
-/*   Updated: 2024/05/23 15:22:25 by ama10362         ###   ########.fr       */
+/*   Updated: 2024/05/23 15:33:58 by ama10362         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ private:
 
 public:
     Array( void ) : _array( new T() ), _size( 0 ) {};
-    Array( unsigned int n ) : _array( new T[n] ), _size( n ) {};
-    Array( const Array& rhs ) : _array( new T[rhs.size()] ), _size( rhs.size() ) {
+    Array( unsigned int n ) : _array( new T[n]() ), _size( n ) {};
+    Array( const Array& rhs ) : _array( new T[rhs.size()]() ), _size( rhs.size() ) {
         for ( unsigned int i( 0 ); i < _size; i++ )
             _array[i] = rhs._array[i];
     };
@@ -35,7 +35,7 @@ public:
     Array& operator=( const Array& rhs ) {
         if ( this != &rhs ) {
             delete [] _array;
-            _array = new T[rhs.size()];
+            _array = new T[rhs.size()]();
             _size = rhs._size;
             for ( unsigned int i( 0 ); i < _size; i++ )
                 _array[i] = rhs._array[i];
