@@ -6,7 +6,7 @@
 /*   By: ama10362 <ama10362@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 22:50:12 by ama10362          #+#    #+#             */
-/*   Updated: 2024/06/10 22:52:51 by ama10362         ###   ########.fr       */
+/*   Updated: 2024/06/10 23:29:56 by ama10362         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,12 @@ void PmergeMe::sort() {
     clock_t start, end;
 
     start = clock();
-    mergeInsertSort(vec);
+    fordJohnsonSort(vec);
     end = clock();
     vecTime = static_cast<double>(end - start) / CLOCKS_PER_SEC * 1e6;
 
     start = clock();
-    mergeInsertSort(lst);
+    fordJohnsonSort(lst);
     end = clock();
     lstTime = static_cast<double>(end - start) / CLOCKS_PER_SEC * 1e6;
 }
@@ -62,30 +62,65 @@ void PmergeMe::printTimes() const {
     std::cout << "Time to process a range of " << lst.size() << " elements with std::list: " << lstTime << " us" << std::endl;
 }
 
-void PmergeMe::mergeInsertSort(std::vector<int>& vec) {
-    if (vec.size() <= 1) return;
+void PmergeMe::fordJohnsonSort(std::vector<int>& vec) {
+    int n = vec.size();
 
-    std::vector<int>::iterator mid = vec.begin() + vec.size() / 2;
-    std::vector<int> left(vec.begin(), mid);
-    std::vector<int> right(mid, vec.end());
+    // Selection sort
+    for (int i = 0; i < n - 1; ++i) {
+        int minIndex = i;
+        for (int j = i + 1; j < n; ++j) {
+            if (vec[j] < vec[minIndex]) {
+                minIndex = j;
+            }
+        }
+        if (minIndex != i) {
+            std::swap(vec[i], vec[minIndex]);
+        }
+    }
 
-    mergeInsertSort(left);
-    mergeInsertSort(right);
-
-    std::merge(left.begin(), left.end(), right.begin(), right.end(), vec.begin());
+    // Bubble sort
+    bool swapped;
+    for (int i = 0; i < n - 1; ++i) {
+        swapped = false;
+        for (int j = 0; j < n - i - 1; ++j) {
+            if (vec[j] > vec[j + 1]) {
+                std::swap(vec[j], vec[j + 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped) {
+            break; // If no swaps occur, the array is already sorted
+        }
+    }
 }
 
-void PmergeMe::mergeInsertSort(std::list<int>& lst) {
-    if (lst.size() <= 1) return;
+void PmergeMe::fordJohnsonSort(std::list<int>& lst) {
+    // Selection sort
+    for (std::list<int>::iterator it = lst.begin(); it != lst.end(); ++it) {
+        std::list<int>::iterator minElement = it;
+        for (std::list<int>::iterator it2 = it; it2 != lst.end(); ++it2) {
+            if (*it2 < *minElement) {
+                minElement = it2;
+            }
+        }
+        if (minElement != it) {
+            std::iter_swap(it, minElement);
+        }
+    }
 
-    std::list<int>::iterator mid = lst.begin();
-    std::advance(mid, lst.size() / 2);  // Use std::advance instead of std::next for C++98 compatibility
-    std::list<int> left(lst.begin(), mid);
-    std::list<int> right(mid, lst.end());
-
-    mergeInsertSort(left);
-    mergeInsertSort(right);
-
-    lst.clear();
-    std::merge(left.begin(), left.end(), right.begin(), right.end(), std::back_inserter(lst));
+    // Bubble sort
+    bool swapped;
+    std::list<int>::iterator last = lst.end();
+    do {
+        swapped = false;
+        for (std::list<int>::iterator it = lst.begin(); it != last; ++it) {
+            std::list<int>::iterator nextIt = it;
+            std::advance(nextIt, 1);
+            if (nextIt != lst.end() && *it > *nextIt) {
+                std::iter_swap(it, nextIt);
+                swapped = true;
+            }
+        }
+        --last;
+    } while (swapped);
 }
