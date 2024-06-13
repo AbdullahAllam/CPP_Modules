@@ -6,7 +6,7 @@
 /*   By: ama10362 <ama10362@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 22:50:16 by ama10362          #+#    #+#             */
-/*   Updated: 2024/06/10 23:30:06 by ama10362         ###   ########.fr       */
+/*   Updated: 2024/06/13 19:03:30 by ama10362         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,12 @@ private:
     double vecTime;
     double lstTime;
 
+    void binaryInsertion(std::list<int>& sortedList, int element);
+    void binaryInsertion(std::vector<int>& sortedVec, int element);
     void fordJohnsonSort(std::vector<int>& vec);
     void fordJohnsonSort(std::list<int>& lst);
-
+    // void mergeInsertSort(std::vector<int>& vec);
+    // void mergeInsertSort(std::list<int>& lst);
 };
 
 #endif

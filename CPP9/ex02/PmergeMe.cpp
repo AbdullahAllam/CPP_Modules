@@ -6,7 +6,7 @@
 /*   By: ama10362 <ama10362@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 22:50:12 by ama10362          #+#    #+#             */
-/*   Updated: 2024/06/10 23:29:56 by ama10362         ###   ########.fr       */
+/*   Updated: 2024/06/13 19:04:29 by ama10362         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,65 +62,90 @@ void PmergeMe::printTimes() const {
     std::cout << "Time to process a range of " << lst.size() << " elements with std::list: " << lstTime << " us" << std::endl;
 }
 
-void PmergeMe::fordJohnsonSort(std::vector<int>& vec) {
-    int n = vec.size();
+// Function to perform binary insertion of an element into a sorted vector
+void PmergeMe::binaryInsertion(std::vector<int>& sortedVec, int element) {
+    std::vector<int>::iterator pos = std::lower_bound(sortedVec.begin(), sortedVec.end(), element);
+    sortedVec.insert(pos, element);
+}
 
-    // Selection sort
-    for (int i = 0; i < n - 1; ++i) {
-        int minIndex = i;
-        for (int j = i + 1; j < n; ++j) {
-            if (vec[j] < vec[minIndex]) {
-                minIndex = j;
-            }
-        }
-        if (minIndex != i) {
-            std::swap(vec[i], vec[minIndex]);
+void PmergeMe::fordJohnsonSort(std::vector<int>& arr) {
+    int n = arr.size();
+
+    // Handle trivial cases
+    if (n <= 1) return;
+
+    // Step 1: Pair up elements and sort each pair
+    std::vector< std::pair<int, int> > pairs;
+    for (int i = 0; i < n - 1; i += 2) {
+        int first = std::min(arr[i], arr[i + 1]);
+        int second = std::max(arr[i], arr[i + 1]);
+        pairs.push_back(std::make_pair(first, second));
+    }
+
+    // If there's an odd element out, just add it as a pair with itself
+    if (n % 2 != 0) {
+        pairs.push_back(std::make_pair(arr[n - 1], arr[n - 1]));
+    }
+
+    // Step 2: Create initial sorted sequence from the smaller elements of each pair
+    std::vector<int> initialSorted;
+    for (size_t i = 0; i < pairs.size(); ++i) {
+        initialSorted.push_back(pairs[i].first);
+    }
+    std::sort(initialSorted.begin(), initialSorted.end());
+
+    // Step 3: Merge-insert the larger elements of each pair
+    for (size_t i = 0; i < pairs.size(); ++i) {
+        if (pairs[i].first != pairs[i].second) {
+            binaryInsertion(initialSorted, pairs[i].second);
         }
     }
 
-    // Bubble sort
-    bool swapped;
-    for (int i = 0; i < n - 1; ++i) {
-        swapped = false;
-        for (int j = 0; j < n - i - 1; ++j) {
-            if (vec[j] > vec[j + 1]) {
-                std::swap(vec[j], vec[j + 1]);
-                swapped = true;
-            }
-        }
-        if (!swapped) {
-            break; // If no swaps occur, the array is already sorted
-        }
-    }
+    // Copy the sorted elements back to the original array
+    arr = initialSorted;
+}
+
+void PmergeMe::binaryInsertion(std::list<int>& sortedList, int element) {
+    std::list<int>::iterator pos = std::lower_bound(sortedList.begin(), sortedList.end(), element);
+    sortedList.insert(pos, element);
 }
 
 void PmergeMe::fordJohnsonSort(std::list<int>& lst) {
-    // Selection sort
-    for (std::list<int>::iterator it = lst.begin(); it != lst.end(); ++it) {
-        std::list<int>::iterator minElement = it;
-        for (std::list<int>::iterator it2 = it; it2 != lst.end(); ++it2) {
-            if (*it2 < *minElement) {
-                minElement = it2;
-            }
-        }
-        if (minElement != it) {
-            std::iter_swap(it, minElement);
+    int n = lst.size();
+
+    // Handle trivial cases
+    if (n <= 1) return;
+
+    // Step 1: Pair up elements and sort each pair
+    std::list< std::pair<int, int> > pairs;
+    std::list<int>::iterator it = lst.begin();
+    while (it != lst.end()) {
+        int first = *it;
+        ++it;
+        if (it != lst.end()) {
+            int second = *it;
+            ++it;
+            pairs.push_back(std::make_pair(std::min(first, second), std::max(first, second)));
+        } else {
+            pairs.push_back(std::make_pair(first, first)); // Handle the odd element out
         }
     }
 
-    // Bubble sort
-    bool swapped;
-    std::list<int>::iterator last = lst.end();
-    do {
-        swapped = false;
-        for (std::list<int>::iterator it = lst.begin(); it != last; ++it) {
-            std::list<int>::iterator nextIt = it;
-            std::advance(nextIt, 1);
-            if (nextIt != lst.end() && *it > *nextIt) {
-                std::iter_swap(it, nextIt);
-                swapped = true;
-            }
+    // Step 2: Create initial sorted sequence from the smaller elements of each pair
+    std::list<int> initialSorted;
+    for (std::list< std::pair<int, int> >::iterator pit = pairs.begin(); pit != pairs.end(); ++pit) {
+        initialSorted.push_back(pit->first);
+    }
+    initialSorted.sort();
+
+    // Step 3: Merge-insert the larger elements of each pair
+    for (std::list< std::pair<int, int> >::iterator pit = pairs.begin(); pit != pairs.end(); ++pit) {
+        if (pit->first != pit->second) {
+            binaryInsertion(initialSorted, pit->second);
         }
-        --last;
-    } while (swapped);
+    }
+
+    // Copy the sorted elements back to the original list
+    lst = initialSorted;
 }
+
